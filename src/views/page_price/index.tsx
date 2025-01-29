@@ -41,6 +41,7 @@ const PagePrice = () => {
                                 title={item.title}
                                 description={item.description}
                                 zIndex={11 + data?.length - index}
+                                id={item._id}
                             />
                         ))}
                     </div>

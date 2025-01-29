@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3758/api";
+export const BASE_URL = "http://localhost:3758/api";
 
 interface ArgTypes {
     endpoint: string;
