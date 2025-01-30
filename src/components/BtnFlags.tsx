@@ -33,7 +33,7 @@ export const BtnFlags = ({changeLng, currentLng}: PropsType) => {
             {langs.map((lang) => (
                 <li
                     key={lang.value}
-                    className={`${currentLng === lang.value ? "" : "border-transparent"} transition-all duration-500 border-b-[2px] border-yellow-500 pb-[2px] sm:pb-[4px]`}
+                    className={`${currentLng === lang.value ? "border-yellow-500" : "border-transparent"} transition-all duration-500 border-b-[2px]  pb-[2px] sm:pb-[4px]`}
                 >
                     <button
                         onClick={() => {
