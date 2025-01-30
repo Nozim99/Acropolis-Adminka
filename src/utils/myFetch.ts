@@ -1,7 +1,6 @@
 import axios from "axios";
+import {BASE_URL} from "./constants.ts";
 
-// export const BASE_URL = "http://localhost:3758/api";
-export const BASE_URL = "http://api.mezes.uz/api";
 
 interface ArgTypes {
     endpoint: string;

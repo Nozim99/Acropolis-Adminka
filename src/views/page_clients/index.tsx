@@ -3,9 +3,9 @@ import useMainFetch from "../../hooks/useMainFetch.ts";
 import Loading from "../../components/Loading.tsx";
 import toast from "react-hot-toast";
 import axios from "axios";
-import {BASE_URL} from "../../utils/myFetch.ts";
 import {useQueryClient} from "react-query";
 import {useState} from "react";
+import {BASE_URL} from "../../utils/constants.ts";
 
 
 const PageClients = () => {
@@ -61,7 +61,7 @@ const PageClients = () => {
                             Delete
                         </button>
                         <img
-                            className={"w-[250px] h-[140px] object-cover"}
+                            className={"w-[250px] h-[140px] object-center object-cover shadow border border-black/10"}
                             src={item.imageUrl}
                             key={index}
                             alt="image"

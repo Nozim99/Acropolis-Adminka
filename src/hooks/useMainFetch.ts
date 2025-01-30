@@ -1,5 +1,6 @@
 import {useQuery} from "react-query";
 import {myFetch} from "../utils/myFetch.ts";
+import {errorHandler} from "../utils/errorHandler.ts";
 
 
 interface ArgTypes {
@@ -16,7 +17,9 @@ const useMainFetch = (
     }: ArgTypes) => {
     return useQuery(
         key,
-        () => myFetch({endpoint}).then(data => generateData(data)),
+        () => myFetch({endpoint})
+            .then(data => generateData(data))
+            .catch(error => errorHandler(error)),
     )
 };
 

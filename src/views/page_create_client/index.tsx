@@ -3,6 +3,7 @@ import {ChangeEvent, useState} from "react";
 import {myFetch} from "../../utils/myFetch.ts";
 import {IconClose} from "../../components/Icons.tsx";
 import {useQueryClient} from "react-query";
+import {errorHandler} from "../../utils/errorHandler.ts";
 
 const PageCreateClient = () => {
     const queyrClient = useQueryClient()
@@ -52,6 +53,7 @@ const PageCreateClient = () => {
                 queyrClient.invalidateQueries('clients')
                 setImageFiles([])
             })
+            .catch(error => errorHandler(error))
             .finally(() => {
                 setIsLoading(false);
             })

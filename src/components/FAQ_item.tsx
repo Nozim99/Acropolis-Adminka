@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from "react";
-import {BASE_URL} from "../utils/myFetch.ts";
+import {BASE_URL} from "../utils/constants.ts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {useQueryClient} from "react-query";
@@ -76,14 +76,9 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
                 </>
             }
             <div className={"flex items-center gap-[20px] justify-end mb-[4px]"}>
-                {/*<button className={"flex items-center gap-[4px] px-[10px] py-[3px] rounded-lg bg-white/10s shadow border border-white/40 text-green-500 hover:bg-green-600 hover:text-white transition-all"}>*/}
-                {/*    /!*<IconEdit />*!/*/}
-                {/*    <span>Редактировать</span>*/}
-                {/*</button>*/}
                 <button
                     onClick={() => setModal(true)}
                     className={"flex items-center gap-[4px] px-[10px] py-[3px] rounded-lg  bg-white/10s shadow border border-white/40 text-red-500 hover:bg-red-600 hover:text-white transition-all"}>
-                    {/*<IconDelete />*/}
                     <span>Удалить</span>
                 </button>
             </div>

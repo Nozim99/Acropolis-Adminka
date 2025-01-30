@@ -2,18 +2,25 @@ import FAQItem from "../../components/FAQ_item.tsx";
 import {Link} from "react-router-dom";
 import useMainFetch from "../../hooks/useMainFetch.ts";
 import Loading from "../../components/Loading.tsx";
+import {BtnFlags} from "../../components/BtnFlags.tsx";
+import {useState} from "react";
 
 
 interface ResType {
     data?: {
-        description: string;
         title: string;
+        title_uz?: string;
+        title_en?: string;
+        description: string;
+        description_uz?: string;
+        description_en?: string;
         _id: string;
     }[];
     isLoading: boolean;
 }
 
 const PagePrice = () => {
+    const [currentLng, setCurrentLng] = useState<string>('ru');
 
 
     const {data, isLoading}: ResType = useMainFetch({
@@ -22,10 +29,18 @@ const PagePrice = () => {
         generateData: (res: any) => res?.data
     })
 
+    const changeLng = (lng: string) => {
+        setCurrentLng(lng)
+    }
+
 
     return (
         <div className={"text-white pb-[200px]"}>
             <h1 className={"text-center text-4xl font-light md:text-5xl mb-[12px] md:mb-[30px] lg:text-6xl lg:mb-[40px]"}>Услуги</h1>
+            <BtnFlags
+                currentLng={currentLng}
+                changeLng={changeLng}
+            />
             {
                 isLoading && <Loading/>
             }
@@ -33,13 +48,25 @@ const PagePrice = () => {
                 data
                     ? <div
                         className={"w-[85%] mx-auto grid gap-y-[8px] mb-[43px] md:w-[500px] lg:w-[950px] lg:grid-cols-2 lg:gap-x-[30px] lg:gap-y-[20px]"}>
-                        {data?.map((item, index) => (
+                        {data.map((item, index) => (
                             <FAQItem
                                 key={index}
                                 isDark={index % 2 === 1}
                                 itemNumber={index + 1}
-                                title={item.title}
-                                description={item.description}
+                                title={
+                                    currentLng === 'ru'
+                                        ? item.title
+                                        : currentLng === 'uz'
+                                            ? item.title_uz || item.title
+                                            : item.title_en || item.title
+                                }
+                                description={
+                                    currentLng === 'ru'
+                                        ? item.description
+                                        : currentLng === 'uz'
+                                            ? item.description_uz || item.description
+                                            : item.description_en || item.description
+                                }
                                 zIndex={11 + data?.length - index}
                                 id={item._id}
                             />
