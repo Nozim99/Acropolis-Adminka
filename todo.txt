@@ -1,1 +1,5 @@
+# First, remove old admin-frontend folder
+sudo rm -rf /var/www/admin-frontend
+
+# Upload new dist folder as "admin-frontend"
 scp -r dist/ root@SERVER_IP:/var/www/admin-frontend
