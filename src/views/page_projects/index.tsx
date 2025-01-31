@@ -31,8 +31,6 @@ const PageProjects = () => {
         generateData: (res: any) => res?.data?.projects || []
     })
 
-    console.log(data)
-
 
     return (
         <div>
@@ -46,7 +44,7 @@ const PageProjects = () => {
                 currentLng={currentLng}
             />
             <div
-                className={"mx-auto grid grid-cols-1 gap-y-[25px] pt-[60px] pb-[41px] relative sm:grid-cols-2 sm:pt-[80px] md:pt-[90px] lg:pt-[120px] xl:pt-[142px] lg:w-[900px] lg:gap-x-[20px] xl:w-[1047px] xl:gap-x-[10px]"}
+                className={"mx-auto grid grid-cols-1 gap-y-[25px] pt-[20px] pb-[41px] relative sm:grid-cols-2 sm:pt-[30px] md:pt-[35px] lg:w-[900px] lg:gap-x-[20px] xl:w-[1047px] xl:gap-x-[10px]"}
             >
                 {data?.map((project, index) => (
                     <CardItem
