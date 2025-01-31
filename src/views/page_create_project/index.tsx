@@ -1,26 +1,37 @@
+import {BtnFlags} from "../../components/BtnFlags.tsx";
+import {useQueryClient} from "react-query";
 import {ChangeEvent, FormEvent, useState} from "react";
 import toast from "react-hot-toast";
 import {myFetch} from "../../utils/myFetch.ts";
-import {useQueryClient} from "react-query";
-import {BtnFlags} from "../../components/BtnFlags.tsx";
 import {errorHandler} from "../../utils/errorHandler.ts";
+import {IconImage} from "../../components/Icons.tsx";
 
 
-const initialFormData = {
+type FormDataType = {
+    title: string;
+    title_uz: string;
+    title_en: string;
+    description: string;
+    description_uz: string;
+    description_en: string;
+};
+
+const initialFormData: FormDataType = {
     title: "",
-    description: "",
     title_uz: "",
-    description_uz: "",
     title_en: "",
+    description: "",
+    description_uz: "",
     description_en: "",
 }
 
 
-const PageCreatePrice = () => {
-    const queyrClient = useQueryClient();
+const PageCreateProject = () => {
+    const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState(initialFormData);
     const [currentLng, setCurrentLng] = useState("ru");
+    const [formData, setFormData] = useState<FormDataType>(initialFormData);
+    const [image, setImage] = useState<File | null | undefined>();
 
 
     const changeInputHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,25 +48,35 @@ const PageCreatePrice = () => {
         setCurrentLng(lng)
     }
 
-
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        if (
-            !formData.title
-            ||
-            !formData.description
-        ) {
+        if (!formData.title || !formData.description) {
             toast.error("Введите название и описание на русском языке!");
             return
+        }
+
+        if (!image) {
+            toast.error("Вставить изображение!")
+            return;
+        }
+
+        const fData = new FormData()
+        fData.append("image", image)
+
+        for (const key in formData) {
+            if (formData.hasOwnProperty(key)) {
+                fData.append(key, formData[key as keyof typeof formData]);
+            }
         }
 
 
         toast.promise(
             myFetch({
-                endpoint: "/services/create",
+                endpoint: "/projects/create",
                 method: "post",
-                data: formData,
+                data: fData,
+                cType: "multipart/form-data"
             }),
             {
                 loading: "Загрузка!",
@@ -64,8 +85,9 @@ const PageCreatePrice = () => {
             }
         )
             .then(() => {
-                queyrClient.invalidateQueries('price')
+                queryClient.invalidateQueries('projects')
                 setFormData(initialFormData)
+                setImage(null)
             })
             .catch(error => errorHandler(error))
             .finally(() => {
@@ -76,13 +98,38 @@ const PageCreatePrice = () => {
 
     return (
         <div>
-            <h2 className={"main_title"}>Добавить Услуги</h2>
-            <BtnFlags
-                currentLng={currentLng}
-                changeLng={changeLng}
-            />
-            <form onSubmit={onSubmit} className={"pb-[100px]"}>
-                <div className={"w-[90%] mx-auto sm:w-[500px] md:w-[600px] lg:w-[800px] xl:w-[1000px]"}>
+            <h2 className={"main_title"}>Добавить Проект</h2>
+            <form onSubmit={onSubmit} className={"mb-[100px]"}>
+
+                <input
+                    type="file"
+                    accept={"image/*"}
+                    hidden
+                    id="image"
+                    value={''}
+                    onChange={e => setImage(e.target.files?.[0])}
+                />
+
+                <label
+                    htmlFor="image"
+                    className={`text-center text-white mb-[30px] overflow-hidden w-[140px] h-[100px] mx-auto rounded shadow border border-black/10 hover:shadow-xl transition-all cursor-pointer flex items-center justify-center
+                    lg:w-[180px] lg:h-[120px]`}
+                >
+                    {
+                        !!image
+                            ? <img src={URL.createObjectURL(image)} alt="image"
+                                   className={"w-full h-full object-center object-cover"}/>
+                            : <IconImage className={"w-[50px] h-auto"}/>
+                    }
+
+                </label>
+
+                <BtnFlags
+                    currentLng={currentLng}
+                    changeLng={changeLng}
+                />
+                <div className={"w-[90%] mx-auto sm:w-[500px] md:w-[600px] lg:w-[800px] xl:w-[1000px] mt-[20px]"}>
+
                     <input
                         onChange={changeInputHandler}
                         name={
@@ -99,7 +146,6 @@ const PageCreatePrice = () => {
                                     ? formData.title_uz
                                     : formData.title_en
                         }
-                        id={"title"}
                         className={"w-full mb-[10px] border border-[#9C9C9C] p-[12px] bg-transparent text-white outline-none lg:mb-[40px] lg:py-[26px] lg:px-[34px]"}
                         type="text"
                         placeholder={"Название"}
@@ -120,7 +166,6 @@ const PageCreatePrice = () => {
                                     ? formData.description_uz
                                     : formData.description_en
                         }
-                        id={"description"}
                         className={"w-full border border-[#9C9C9C] bg-transparent p-[12px] text-white outline-none mb-[41px] lg:py-[26px] lg:px-[34px]"}
                         placeholder={"Описание"}
                         rows={10}
@@ -129,11 +174,11 @@ const PageCreatePrice = () => {
                 <button
                     disabled={isLoading}
                     className={"w-[90%] block mx-auto border-[3px] border-[#D8A227] py-[19px] rounded-[10px] text-xl font-medium text-white min-[400px]:w-[340px]"}>
-                    Добавить услугу
+                    Добавить
                 </button>
             </form>
         </div>
     )
 }
 
-export default PageCreatePrice;
+export default PageCreateProject;

@@ -36,6 +36,7 @@ export const BtnFlags = ({changeLng, currentLng}: PropsType) => {
                     className={`${currentLng === lang.value ? "border-yellow-500" : "border-transparent"} transition-all duration-500 border-b-[2px]  pb-[2px] sm:pb-[4px]`}
                 >
                     <button
+                        type={"button"}
                         onClick={() => {
                             changeLng(lang.value)
                         }}

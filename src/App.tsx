@@ -9,6 +9,10 @@ import {useEffect} from "react";
 import {Toaster} from "react-hot-toast";
 import {QueryClientProvider} from "react-query";
 import queryClient from "./services/queryClient.ts";
+import PageSolution from "./views/page_solution";
+import PageCreateSolution from "./views/page_create_solution";
+import PageCreateProject from "./views/page_create_project";
+import PageProjects from "./views/page_projects";
 
 
 function App() {
@@ -40,6 +44,10 @@ function App() {
                     <Route path="/create-price" element={<PageCreatePrice/>}/>
                     <Route path="/clients" element={<PageClients/>}/>
                     <Route path="/create-client" element={<PageCreateClient/>}/>
+                    <Route path="/solution" element={<PageSolution/>}/>
+                    <Route path="/create-solution" element={<PageCreateSolution/>}/>
+                    <Route path="/projects" element={<PageProjects/>}/>
+                    <Route path="/create-project" element={<PageCreateProject/>}/>
                 </Routes>
             </QueryClientProvider>
 

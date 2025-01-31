@@ -36,7 +36,7 @@ const PagePrice = () => {
 
     return (
         <div className={"text-white pb-[200px]"}>
-            <h1 className={"text-center text-4xl font-light md:text-5xl mb-[12px] md:mb-[30px] lg:text-6xl lg:mb-[40px]"}>Услуги</h1>
+            <h1 className={"main_title"}>Услуги</h1>
             <BtnFlags
                 currentLng={currentLng}
                 changeLng={changeLng}

@@ -1,10 +1,9 @@
-'use client'
-
 import {useEffect, useRef, useState} from "react";
 import {BASE_URL} from "../utils/constants.ts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import {useQueryClient} from "react-query";
+import DeleteModal from "./DeleteModal.tsx";
 
 
 interface IProps {
@@ -55,25 +54,10 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
         <div>
             {
                 modal &&
-                <>
-                    <div onClick={() => setModal(false)} className={"fixed z-50 inset-0 bg-black/50 backdrop-blur-[2px]"}></div>
-                    <div
-                        className={` fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#D8A227] text-[var(--darkBlue)] w-[300px] py-[14px] rounded-lg z-50 sm:w-[360px] sm:px-[10px] sm:py-[20px] lg:w-[550px] lg:py-[30px]`}>
-                        <h2 className={"text-lg text-center mb-[18px] font-semibold lg:text-2xl lg:mb-[25px]"}>Вы действительно хотите его удалить?</h2>
-                        <div className={"flex justify-center gap-[14px] lg:text-lg"}>
-                            <button onClick={() => setModal(false)}
-                                    className={"border border-neutral-900 w-[120px] py-[1px] rounded text-black hover:bg-neutral-800 hover:text-white transition-all duration-300 lg:w-[150px] lg:py-[5px]"}>
-                                Отмена
-                            </button>
-                            <button
-                                onClick={deleteItem}
-                                className={"border border-red-600 w-[120px] py-[1px] rounded text-black hover:bg-red-600 hover:text-white transition-all duration-300 lg:w-[150px] lg:py-[5px]"}
-                            >
-                                Продолжать
-                            </button>
-                        </div>
-                    </div>
-                </>
+                <DeleteModal
+                    closeModal={() => setModal(false)}
+                    deleteHandler={deleteItem}
+                />
             }
             <div className={"flex items-center gap-[20px] justify-end mb-[4px]"}>
                 <button
