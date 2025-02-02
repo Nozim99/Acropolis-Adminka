@@ -3,3 +3,7 @@ sudo rm -rf /var/www/admin-frontend
 
 # Upload new dist folder as "admin-frontend"
 scp -r dist/ root@SERVER_IP:/var/www/admin-frontend
+
+# Allow access to the folder
+sudo chmod -R 755 /var/www/admin-frontend
+sudo chown -R www-data:www-data /var/www/admin-frontend
