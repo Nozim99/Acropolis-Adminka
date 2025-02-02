@@ -73,7 +73,7 @@ const CardItem = ({image, title, description, id, removeDataFromArr}: IProps) =>
                         <div
                             className={"flex items-center justify-center z-10 relative"}>
                             <button onClick={() => setIsEditOpen(true)}
-                                    className={"border-2 border-white/60 rounded-full p-[2px] bg-black/20"}>
+                                    className={"border-2 border-white/60 rounded-full p-[2px] bg-black/50 backdrop-blur"}>
                                 <IconDod3/>
                             </button>
                             {isEditOpen && <div
@@ -98,7 +98,7 @@ const CardItem = ({image, title, description, id, removeDataFromArr}: IProps) =>
                             </div>
                         </div>
                         <button {...listeners} {...attributes}
-                                className={"w-[30px] h-[30px] border flex items-center justify-center cursor-grab active:cursor-grabbing transition-all rounded bg-black/30"}>
+                                className={"w-[30px] backdrop-blur h-[30px] border flex items-center justify-center cursor-grab active:cursor-grabbing transition-all rounded bg-black/30"}>
                             <IconLine2/>
                         </button>
                     </div>

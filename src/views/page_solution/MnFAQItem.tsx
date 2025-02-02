@@ -86,7 +86,7 @@ const MnFAQItem = (
                         className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center z-10"}>
                         <button onClick={() => setIsEditOpen(true)}
                                 disabled={isDeleting}
-                                className={"border-2 border-white/60 rounded-full p-[2px]"}>
+                                className={"border-2 border-white/60 rounded-full p-[2px] bg-black/50 backdrop-blur"}>
                             <IconDod3/>
                         </button>
                         {isEditOpen && <div
@@ -111,7 +111,7 @@ const MnFAQItem = (
                         </div>
                     </div>
                     <button {...listeners} {...attributes}
-                            className={"w-[30px] h-[30px] border flex items-center justify-center cursor-grab active:cursor-grabbing transition-all rounded bg-black/30"}>
+                            className={"w-[30px] backdrop-blur h-[30px] border flex items-center justify-center cursor-grab active:cursor-grabbing transition-all rounded bg-black/30"}>
                         <IconLine2/>
                     </button>
                 </div>
