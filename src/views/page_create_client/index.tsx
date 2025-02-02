@@ -2,11 +2,10 @@ import toast from "react-hot-toast";
 import {ChangeEvent, useState} from "react";
 import {myFetch} from "../../utils/myFetch.ts";
 import {IconClose} from "../../components/Icons.tsx";
-import {useQueryClient} from "react-query";
 import {errorHandler} from "../../utils/errorHandler.ts";
 
+
 const PageCreateClient = () => {
-    const queyrClient = useQueryClient()
     const [isLoading, setIsLoading] = useState(false);
     const [imageFiles, setImageFiles] = useState<File[]>([]);
 
@@ -50,7 +49,6 @@ const PageCreateClient = () => {
             }
         )
             .then(() => {
-                queyrClient.invalidateQueries('clients')
                 setImageFiles([])
             })
             .catch(error => errorHandler(error))

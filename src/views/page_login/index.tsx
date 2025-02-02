@@ -1,7 +1,7 @@
 import {FormEvent, useState} from "react";
-import {myFetch} from "../../utils/myFetch.ts";
 import toast from "react-hot-toast";
 import {useNavigate} from "react-router-dom";
+import {myFetch} from "../../utils/myFetch.ts";
 
 const PageLogin = () => {
     const navigate = useNavigate();

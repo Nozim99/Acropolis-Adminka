@@ -19,3 +19,12 @@ body {
 .main_title{
     @apply text-center text-4xl font-light md:text-5xl mb-[12px] md:mb-[30px] lg:text-6xl lg:mb-[40px] text-white;
 }
+
+@keyframes fadeBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.fade-blink-3 {
+    animation: fadeBlink 1s ease-in 0s 3 both;
+}

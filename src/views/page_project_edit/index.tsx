@@ -1,18 +1,21 @@
-import {ChangeEvent, FormEvent, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import toast from "react-hot-toast";
+import {useNavigate, useParams} from "react-router-dom";
+import axios from "axios";
 import {BtnFlags} from "../../components/BtnFlags.tsx";
 import {myFetch} from "../../utils/myFetch.ts";
 import {errorHandler} from "../../utils/errorHandler.ts";
-import {IconImage} from "../../components/Icons.tsx";
+import Loading from "../../components/Loading.tsx";
+import {BASE_URL} from "../../utils/constants.ts";
 
 
 type FormDataType = {
     title: string;
-    title_uz: string;
-    title_en: string;
+    title_uz?: string;
+    title_en?: string;
     description: string;
-    description_uz: string;
-    description_en: string;
+    description_uz?: string;
+    description_en?: string;
 };
 
 const initialFormData: FormDataType = {
@@ -25,11 +28,37 @@ const initialFormData: FormDataType = {
 }
 
 
-const PageCreateProject = () => {
+const PageProjectEdit = () => {
+    const {id} = useParams();
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [currentLng, setCurrentLng] = useState("ru");
     const [formData, setFormData] = useState<FormDataType>(initialFormData);
-    const [image, setImage] = useState<File | null | undefined>();
+    const [image, setImage] = useState<File | undefined>();
+    const [strImage, setStrImage] = useState<string>()
+    const [isFetching, setIsFetching] = useState<boolean>(true);
+
+
+    useEffect(() => {
+        myFetch({endpoint: "/projects/" + id})
+            .then(res => {
+                const resData: FormDataType & { image: { url: string }, _id: string } = res.data?.project
+
+                setStrImage(resData.image.url)
+                setFormData({
+                    title: resData.title,
+                    title_uz: resData.title_uz,
+                    title_en: resData.title_en,
+                    description: resData.description,
+                    description_uz: resData.description_uz,
+                    description_en: resData.description_en,
+                })
+            })
+            .catch(() => {
+                navigate('/projects')
+            })
+            .finally(() => setIsFetching(false))
+    }, []);
 
 
     const changeInputHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -54,27 +83,27 @@ const PageCreateProject = () => {
             return
         }
 
-        if (!image) {
-            toast.error("Вставить изображение!")
-            return;
-        }
-
         const fData = new FormData()
-        fData.append("image", image)
+
+        if (image) {
+            fData.append("image", image)
+        }
 
         for (const key in formData) {
             if (formData.hasOwnProperty(key)) {
-                fData.append(key, formData[key as keyof typeof formData]);
+                const value = formData[key as keyof typeof formData] ?? ""
+                fData.append(key, value);
             }
         }
 
 
+        setIsLoading(true)
         toast.promise(
-            myFetch({
-                endpoint: "/projects/create",
-                method: "post",
-                data: fData,
-                cType: "multipart/form-data"
+            axios.put(BASE_URL + '/projects/edit/' + id, fData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    'Content-Type': 'multipart/form-data'
+                }
             }),
             {
                 loading: "Загрузка!",
@@ -83,8 +112,7 @@ const PageCreateProject = () => {
             }
         )
             .then(() => {
-                setFormData(initialFormData)
-                setImage(null)
+                navigate('/projects')
             })
             .catch(error => errorHandler(error))
             .finally(() => {
@@ -95,6 +123,9 @@ const PageCreateProject = () => {
 
     return (
         <div>
+            {
+                isFetching && <Loading/>
+            }
             <h2 className={"main_title"}>Добавить Проект</h2>
             <form onSubmit={onSubmit} className={"mb-[100px]"}>
 
@@ -112,13 +143,8 @@ const PageCreateProject = () => {
                     className={`text-center text-white mb-[30px] overflow-hidden w-[140px] h-[100px] mx-auto rounded shadow border border-black/10 hover:shadow-xl transition-all cursor-pointer flex items-center justify-center
                     lg:w-[180px] lg:h-[120px]`}
                 >
-                    {
-                        !!image
-                            ? <img src={URL.createObjectURL(image)} alt="image"
-                                   className={"w-full h-full object-center object-cover"}/>
-                            : <IconImage className={"w-[50px] h-auto"}/>
-                    }
-
+                    <img src={image ? URL.createObjectURL(image) : strImage} alt="image"
+                         className={"w-full h-full object-center object-cover"}/>
                 </label>
 
                 <BtnFlags
@@ -178,4 +204,4 @@ const PageCreateProject = () => {
     )
 }
 
-export default PageCreateProject;
+export default PageProjectEdit;

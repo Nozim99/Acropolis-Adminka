@@ -1,21 +1,41 @@
-import {ChangeEvent, FormEvent, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
+import {useNavigate, useParams} from "react-router-dom";
 import {BtnFlags} from "../../components/BtnFlags.tsx";
-import {myFetch} from "../../utils/myFetch.ts";
 import {errorHandler} from "../../utils/errorHandler.ts";
-import {IconImage} from "../../components/Icons.tsx";
+import {BASE_URL} from "../../utils/constants.ts";
+import Loading from "../../components/Loading.tsx";
 
 
-type FormDataType = {
+interface IData {
     title: string;
-    title_uz: string;
-    title_en: string;
-    description: string;
-    description_uz: string;
-    description_en: string;
-};
+    title_uz?: string;
+    title_en?: string;
+    description: string[];
+    description_uz?: string[];
+    description_en?: string[];
+    category: 'it-infrastructure' | 'system-software' | 'information-security'
+}
 
-const initialFormData: FormDataType = {
+
+const categories = [
+    {
+        title: "ИТ-инфраструктура",
+        value: 'it-infrastructure',
+    },
+    {
+        title: "Системное ПО",
+        value: 'system-software',
+    },
+    {
+        title: "Информационная безопасность",
+        value: 'information-security',
+    },
+];
+
+
+const initialFormData = {
     title: "",
     title_uz: "",
     title_en: "",
@@ -25,11 +45,33 @@ const initialFormData: FormDataType = {
 }
 
 
-const PageCreateProject = () => {
+const PageSolutionEdit = () => {
+    const navigate = useNavigate()
+    const {id} = useParams();
     const [isLoading, setIsLoading] = useState(false);
+    const [isDataLoading, setIsDataLoading] = useState(true);
     const [currentLng, setCurrentLng] = useState("ru");
-    const [formData, setFormData] = useState<FormDataType>(initialFormData);
-    const [image, setImage] = useState<File | null | undefined>();
+    const [formData, setFormData] = useState(initialFormData);
+    const [categoryValue, setCategoryValue] = useState(categories[0].value)
+
+
+    useEffect(() => {
+        axios.get(BASE_URL + '/solutions/' + id)
+            .then(res => {
+                const data: IData = res.data?.solution;
+
+                setCategoryValue(data.category);
+                setFormData({
+                    title: data.title,
+                    title_uz: data.title_uz || "",
+                    title_en: data.title_en || "",
+                    description: data.description.join('\n'),
+                    description_uz: data.description_uz?.length ? data.description_uz.join('\n') : "",
+                    description_en: data.description_en?.length ? data.description_en.join('\n') : "",
+                })
+            })
+            .finally(() => setIsDataLoading(false))
+    }, []);
 
 
     const changeInputHandler = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -49,33 +91,30 @@ const PageCreateProject = () => {
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        if (!formData.title || !formData.description) {
+        if (
+            !formData.title
+            ||
+            !formData.description
+        ) {
             toast.error("Введите название и описание на русском языке!");
             return
         }
 
-        if (!image) {
-            toast.error("Вставить изображение!")
-            return;
-        }
-
-        const fData = new FormData()
-        fData.append("image", image)
-
-        for (const key in formData) {
-            if (formData.hasOwnProperty(key)) {
-                fData.append(key, formData[key as keyof typeof formData]);
-            }
-        }
-
 
         toast.promise(
-            myFetch({
-                endpoint: "/projects/create",
-                method: "post",
-                data: fData,
-                cType: "multipart/form-data"
-            }),
+            axios.put(BASE_URL + '/solutions/edit/' + id, {
+                    ...formData,
+                    category: categoryValue,
+                    description: formData.description.split('\n'),
+                    description_uz: formData.description_uz ? formData.description_uz.split('\n') : [],
+                    description_en: formData.description_en ? formData.description_en.split('\n') : [],
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                }),
             {
                 loading: "Загрузка!",
                 success: "Успешно завершено!",
@@ -83,8 +122,7 @@ const PageCreateProject = () => {
             }
         )
             .then(() => {
-                setFormData(initialFormData)
-                setImage(null)
+                navigate('/solution')
             })
             .catch(error => errorHandler(error))
             .finally(() => {
@@ -95,32 +133,38 @@ const PageCreateProject = () => {
 
     return (
         <div>
-            <h2 className={"main_title"}>Добавить Проект</h2>
+            {
+                isDataLoading && <Loading/>
+            }
+            <h2 className={"main_title"}>Добавить Решения</h2>
+
             <form onSubmit={onSubmit} className={"mb-[100px]"}>
-
-                <input
-                    type="file"
-                    accept={"image/*"}
-                    hidden
-                    id="image"
-                    value={''}
-                    onChange={e => setImage(e.target.files?.[0])}
-                />
-
                 <label
-                    htmlFor="image"
-                    className={`text-center text-white mb-[30px] overflow-hidden w-[140px] h-[100px] mx-auto rounded shadow border border-black/10 hover:shadow-xl transition-all cursor-pointer flex items-center justify-center
-                    lg:w-[180px] lg:h-[120px]`}
+                    htmlFor={'category'}
+                    className={"block text-center mb-[10px] text-white text-xl md:text-2xl md:mb-[14px]"}
                 >
-                    {
-                        !!image
-                            ? <img src={URL.createObjectURL(image)} alt="image"
-                                   className={"w-full h-full object-center object-cover"}/>
-                            : <IconImage className={"w-[50px] h-auto"}/>
-                    }
-
+                    Kategoriya
                 </label>
-
+                <div className={"flex justify-center mb-[30px]"}>
+                    <select
+                        value={categoryValue}
+                        onChange={e => setCategoryValue(e.target.value)}
+                        className={"text-black px-[14px] py-[10px] rounded outline-0 "}
+                        id="category"
+                    >
+                        {
+                            categories.map(category => (
+                                <option
+                                    className={""}
+                                    value={category.value}
+                                    key={category.value}
+                                >
+                                    {category.title}
+                                </option>
+                            ))
+                        }
+                    </select>
+                </div>
                 <BtnFlags
                     currentLng={currentLng}
                     changeLng={changeLng}
@@ -178,4 +222,4 @@ const PageCreateProject = () => {
     )
 }
 
-export default PageCreateProject;
+export default PageSolutionEdit;

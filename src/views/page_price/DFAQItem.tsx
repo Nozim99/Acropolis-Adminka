@@ -1,10 +1,12 @@
+import {Link} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import {BASE_URL} from "../utils/constants.ts";
-import axios from "axios";
 import toast from "react-hot-toast";
-import {useQueryClient} from "react-query";
-import DeleteModal from "./DeleteModal.tsx";
-
+import axios from "axios";
+import {useSortable} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
+import {BASE_URL} from "../../utils/constants.ts";
+import DeleteModal from "../../components/DeleteModal.tsx";
+import {IconDelete, IconDod3, IconEdit, IconLine2} from "../../components/Icons.tsx";
 
 interface IProps {
     isDark: boolean,
@@ -12,20 +14,29 @@ interface IProps {
     title: string,
     description: string,
     zIndex: number,
-    id: string
+    id: string;
+    removeItem: () => void,
 }
 
 
-const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) => {
-    const queryClient = useQueryClient()
+export const DFAQItem = ({isDark, itemNumber, title, description, zIndex, id, removeItem}: IProps) => {
+    const token = localStorage.getItem("token")
+    const editRef = useRef<HTMLDivElement>(null)
     const [isOpen, setIsOpen] = useState(false)
+    const [isEditOpen, setIsEditOpen] = useState(false)
     const [modal, setModal] = useState(false)
     const itemRef = useRef<HTMLDivElement>(null)
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({id});
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
 
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (itemRef.current && !itemRef.current.contains(event.target as Node)) setIsOpen(false);
+            if (editRef.current && !editRef.current.contains(event.target as Node)) setIsEditOpen(false);
         }
 
         document.addEventListener("mousedown", handleClickOutside);
@@ -33,8 +44,6 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
     }, [])
 
     const deleteItem = () => {
-        const token = localStorage.getItem("token")
-
         toast.promise(
             axios.delete(BASE_URL + '/services/' + id, {headers: {Authorization: `Bearer ${token}`}}),
             {
@@ -44,14 +53,14 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
             }
         )
             .then(() => {
-                queryClient.invalidateQueries('price')
+                removeItem()
             })
         setModal(false)
     }
 
 
     return (
-        <div>
+        <div ref={setNodeRef} style={style}>
             {
                 modal &&
                 <DeleteModal
@@ -59,14 +68,37 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
                     deleteHandler={deleteItem}
                 />
             }
-            <div className={"flex items-center gap-[20px] justify-end mb-[4px]"}>
-                <button
-                    onClick={() => setModal(true)}
-                    className={"flex items-center gap-[4px] px-[10px] py-[3px] rounded-lg  bg-white/10s shadow border border-white/40 text-red-500 hover:bg-red-600 hover:text-white transition-all"}>
-                    <span>Удалить</span>
-                </button>
-            </div>
             <div className="relative">
+                <div className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center z-10"}>
+                    <button onClick={() => setIsEditOpen(true)}
+                            className={"border-2 border-white/60 rounded-full p-[2px]"}>
+                        <IconDod3/>
+                    </button>
+                    {isEditOpen && <div
+                        className={"absolute top-1/2 -translate-y-1/2 inset-0  z-10 w-[30px] h-[33px]"}></div>}
+                    <div
+                        ref={editRef}
+                        className={`${isEditOpen ? "max-h-[100px]" : "max-h-0 pointer-events-none"} z-30 ease-out overflow-hidden transition-all duration-500 absolute flex flex-col bg-white text-black right-0 top-full rounded rounded-tr-0`}
+                    >
+                        <button
+                            onClick={() => setModal(true)}
+                            className={"px-[30px] py-[8px] hover:bg-black/20 transition-all duration-300 flex items-center gap-[6px]"}>
+                            <IconDelete className={"w-[20px] h-auto"}/>
+                            <span>Удалить</span>
+                        </button>
+                        <hr/>
+                        <Link
+                            to={'/edit-price/' + id}
+                            className={"px-[30px] py-[8px] hover:bg-black/20 transition-all duration-300 flex items-center gap-[6px]"}>
+                            <IconEdit/>
+                            <span>Редактировать</span>
+                        </Link>
+                    </div>
+                </div>
+                <button {...listeners} {...attributes}
+                        className={"absolute w-[30px] h-[30px] border flex items-center justify-center cursor-grab active:cursor-grabbing transition-all rounded bg-black/30 top-1/2 -translate-y-1/2 right-[10px]"}>
+                    <IconLine2/>
+                </button>
                 <button
                     onClick={() => setIsOpen(true)}
                     className={`${isOpen ? "rounded-t-[10px]" : "rounded-[10px]"} ${isDark ? "bg-[var(--darkBlue)] border-[#D8A227]" : "bg-[#D8A227] border-black/20"} border-[2px] md:border-[3px] transition-all text-start
@@ -93,5 +125,3 @@ const FAQItem = ({isDark, itemNumber, title, description, zIndex, id}: IProps) =
         </div>
     )
 }
-
-export default FAQItem

@@ -1,7 +1,6 @@
 import {ChangeEvent, FormEvent, useState} from "react";
 import toast from "react-hot-toast";
 import {myFetch} from "../../utils/myFetch.ts";
-import {useQueryClient} from "react-query";
 import {BtnFlags} from "../../components/BtnFlags.tsx";
 import {errorHandler} from "../../utils/errorHandler.ts";
 
@@ -17,7 +16,6 @@ const initialFormData = {
 
 
 const PageCreatePrice = () => {
-    const queyrClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(initialFormData);
     const [currentLng, setCurrentLng] = useState("ru");
@@ -64,7 +62,6 @@ const PageCreatePrice = () => {
             }
         )
             .then(() => {
-                queyrClient.invalidateQueries('price')
                 setFormData(initialFormData)
             })
             .catch(error => errorHandler(error))

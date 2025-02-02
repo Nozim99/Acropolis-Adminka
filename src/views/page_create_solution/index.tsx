@@ -1,9 +1,9 @@
-import {BtnFlags} from "../../components/BtnFlags.tsx";
 import {ChangeEvent, FormEvent, useState} from "react";
 import toast from "react-hot-toast";
+import {BtnFlags} from "../../components/BtnFlags.tsx";
 import {myFetch} from "../../utils/myFetch.ts";
 import {errorHandler} from "../../utils/errorHandler.ts";
-import {useQueryClient} from "react-query";
+
 
 const categories = [
     {
@@ -32,7 +32,6 @@ const initialFormData = {
 
 
 const PageCreateSolution = () => {
-    const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
     const [currentLng, setCurrentLng] = useState("ru");
     const [formData, setFormData] = useState(initialFormData);
@@ -85,7 +84,6 @@ const PageCreateSolution = () => {
             }
         )
             .then(() => {
-                queryClient.invalidateQueries('solutions')
                 setFormData(initialFormData)
             })
             .catch(error => errorHandler(error))
