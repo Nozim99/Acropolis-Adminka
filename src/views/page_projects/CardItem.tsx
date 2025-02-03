@@ -65,7 +65,7 @@ const CardItem = ({image, title, description, id, removeDataFromArr}: IProps) =>
                 modal &&
                 <DeleteModal closeModal={() => setModal(false)} deleteHandler={deleteItem}/>
             }
-            <div ref={setNodeRef} style={style} className={"mx-auto text-white rounded-tr-[10px]"}>
+            <div ref={setNodeRef} style={style} className={"mx-auto text-white rounded-tr-[10px] touch-none"}>
                 <div
                     className={"relative w-[290px] h-[170px] rounded-[10px]  overflow-hidden sm:w-[275px] sm:h-[160px] md:w-[320px] md:h-[195px] lg:w-[420px] lg:h-[250px] xl:w-[474px] xl:h-[278px]"}
                 >

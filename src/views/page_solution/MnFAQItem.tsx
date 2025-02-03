@@ -72,7 +72,7 @@ const MnFAQItem = (
 
 
     return (
-        <div ref={setNodeRef} style={style} className="relative">
+        <div ref={setNodeRef} style={style} className="relative touch-none">
             {
                 deleteModal &&
                 <DeleteModal

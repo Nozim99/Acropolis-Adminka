@@ -59,7 +59,7 @@ export const ImgCard = (
                 />
             }
 
-            <div ref={setNodeRef} style={style} className={"relative mx-auto bg-[#004040]"}>
+            <div ref={setNodeRef} style={style} className={"relative mx-auto bg-[#004040] touch-none"}>
                 <div className={"absolute flex items-center gap-[10px] top-[4px] right-[8px]"}>
                     <button
                         onClick={() => setDeleteModal(true)}

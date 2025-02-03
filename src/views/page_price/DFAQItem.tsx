@@ -60,7 +60,11 @@ export const DFAQItem = ({isDark, itemNumber, title, description, zIndex, id, re
 
 
     return (
-        <div ref={setNodeRef} style={style}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={"touch-none"}
+        >
             {
                 modal &&
                 <DeleteModal
