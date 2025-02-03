@@ -69,7 +69,7 @@ export const DFAQItem = ({isDark, itemNumber, title, description, zIndex, id, re
                 />
             }
             <div className="relative">
-                <div className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center z-10"}>
+                <div style={{zIndex}} className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center z-10"}>
                     <button onClick={() => setIsEditOpen(true)}
                             className={"border-2 border-white/60 rounded-full p-[2px] bg-black/50 backdrop-blur"}>
                         <IconDod3/>

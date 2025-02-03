@@ -81,9 +81,11 @@ const MnFAQItem = (
                 />
             }
             <div className={"relative"}>
-                <div className={"absolute top-1/2 -translate-y-1/2 right-[15px] flex items-center gap-[10px] z-10"}>
-                    <div
-                        className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center z-10"}>
+                <div
+                    style={{zIndex: 11 + (zIndex || 0)}}
+                    className={"absolute top-1/2 -translate-y-1/2 right-[15px] flex items-center gap-[10px] z-10"}
+                >
+                    <div className={"absolute top-1/2 -translate-y-1/2 right-[50px] flex items-center justify-center"}>
                         <button onClick={() => setIsEditOpen(true)}
                                 disabled={isDeleting}
                                 className={"border-2 border-white/60 rounded-full p-[2px] bg-black/50 backdrop-blur"}>
